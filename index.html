@@ -1,54 +1,668 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Calculator App</title>
+		<title>Calculator App</title>
 
-    <!-- import the webpage's stylesheet -->
-    <link rel="stylesheet" href="/style.css" />
-  </head>
-  <body>
-    
-    
-    <div class="wrapper">
-      <div class="calculator-screen">
-        <h3 class="display">0</h3>
-      </div>
+		<!-- import the webpage's stylesheet -->
+		<style>
+			html {
+				box-sizing: border-box;
+			}
+			*,
+			*:before,
+			*:after {
+				box-sizing: inherit;
+			}
+			body {
+				padding: 0;
+				margin: 0;
+			}
+			.wrapper {
+				width: 400px;
+				background-color: #000000;
+			}
 
-      <div class="calculator-buttons">
-        <button class="clear"><h3>C</h3></button>
-        <button class="back"><h3>&#8592;</h3></button>
-        <button class="divide"><h3>&#xf7;</h3></button>
-        <button class="seven"><h3>7</h3></button>
-        <button class="eight"><h3>8</h3></button>
-        <button class="nine"><h3>9</h3></button>
-        <button class="times"><h3>&#xd7;</h3></button>
-        <button class="four"><h3>4</h3></button>
-        <button class="five"><h3>5</h3></button>
-        <button class="six"><h3>6</h3></button>
-        <button class="subtract"><h3>&#x2212;</h3></button>
-        <button class="one"><h3>1</h3></button>
-        <button class="two"><h3>2</h3></button>
-        <button class="three"><h3>3</h3></button>
-        <button class="add"><h3>+</h3></button>
-        <button class="zero"><h3>0</h3></button>
-        <button class="equal"><h3>&#x3d;</h3></button>
-      </div>
-    </div>
-    <h2>
-      You can use keyboard too! Enter:<br>
-      Add: a <br>
-      Subtract: s <br>
-      Multiply: x <br>
-      Divide: d <br>
-      Delete: backspace <br>
-      Clear: escape <br>
-      Enter: equals <br>
-      0-9: represents Number you can input
-    </h2>
-    <script type="text/javascript" src="script.js"></script>
-  </body>
+			button:hover {
+				box-shadow: 0 0 5px 5px #00f0f0;
+				font-weight: bolder;
+			}
+
+			.calculator-screen {
+				display: flex;
+				flex-flow: row wrap;
+				background-color: #000000;
+			}
+
+			.calculator-buttons {
+				display: grid;
+				grid-gap: 2px;
+				margin: 0 auto;
+				float: none;
+				text-align: center;
+			}
+
+			.display {
+				padding: 2%;
+				flex: 0 0 98%;
+				text-align: right;
+			}
+
+			h3.display {
+				color: #ffffff;
+			}
+
+			.clear {
+				grid-column: 1/3;
+				grid-row: 1/2;
+				background-color: #bebebe;
+			}
+
+			.back {
+				grid-column: 3/4;
+				grid-row: 1/2;
+				background-color: #bebebe;
+			}
+
+			.divide {
+				grid-column: 4/5;
+				grid-row: 1/2;
+				background-color: #fa9c1b;
+			}
+
+			.seven {
+				grid-column: 1/2;
+				grid-row: 2/3;
+				background-color: #bebebe;
+			}
+
+			.eight {
+				grid-column: 2/3;
+				grid-row: 2/3;
+				background-color: #bebebe;
+			}
+
+			.nine {
+				grid-column: 3/4;
+				grid-row: 2/3;
+				background-color: #bebebe;
+			}
+
+			.times {
+				grid-column: 4/5;
+				grid-row: 2/3;
+				background-color: #fa9c1b;
+			}
+
+			.four {
+				grid-column: 1/2;
+				grid-row: 3/4;
+				background-color: #bebebe;
+			}
+
+			.five {
+				grid-column: 2/3;
+				grid-row: 3/4;
+				background-color: #bebebe;
+			}
+
+			.six {
+				grid-column: 3/4;
+				grid-row: 3/4;
+				background-color: #bebebe;
+			}
+
+			.subtract {
+				grid-column: 4/5;
+				grid-row: 3/4;
+				background-color: #fa9c1b;
+			}
+
+			.one {
+				grid-column: 1/2;
+				grid-row: 4/5;
+				background-color: #bebebe;
+			}
+
+			.two {
+				grid-column: 2/3;
+				grid-row: 4/5;
+				background-color: #bebebe;
+			}
+
+			.three {
+				grid-column: 3/4;
+				grid-row: 4/5;
+				background-color: #bebebe;
+			}
+
+			.add {
+				grid-column: 4/5;
+				grid-row: 4/5;
+				background-color: #fa9c1b;
+			}
+
+			.zero {
+				grid-column: 1/4;
+				grid-row: 5/6;
+				background-color: #bebebe;
+			}
+			.equal {
+				grid-column: 4/5;
+				grid-row: 5/6;
+				background-color: #fa9c1b;
+			}
+		</style>
+		<script>
+			const display = document.querySelector(".display");
+			var total = 0;
+			var last;
+			var op = 0;
+
+			//----------------------------------------
+			//
+			//ON-SCREEN CALCULATOR
+			//
+			//----------------------------------------
+			document
+				.querySelector(".calculator-buttons")
+				.addEventListener("click", function (event) {
+					//if(event.target.innerText == 1)
+					//console.log(event.target.innerText)
+
+					//Checks to see what button was pressed on the calculator
+					switch (event.target.innerText) {
+						case "1":
+							console.log(1);
+							display.innerHTML = parseInt(
+								(display.innerHTML += 1)
+							);
+							break;
+						case "2":
+							console.log(2);
+							display.innerHTML = parseInt(
+								(display.innerHTML += 2)
+							);
+							break;
+						case "3":
+							console.log(3);
+							display.innerHTML = parseInt(
+								(display.innerHTML += 3)
+							);
+							break;
+						case "4":
+							console.log(4);
+							display.innerHTML = parseInt(
+								(display.innerHTML += 4)
+							);
+							break;
+						case "5":
+							console.log(5);
+							display.innerHTML = parseInt(
+								(display.innerHTML += 5)
+							);
+							break;
+						case "6":
+							console.log(6);
+							display.innerHTML = parseInt(
+								(display.innerHTML += 6)
+							);
+							break;
+						case "7":
+							console.log(7);
+							display.innerHTML = parseInt(
+								(display.innerHTML += 7)
+							);
+							break;
+						case "8":
+							console.log(8);
+							display.innerHTML = parseInt(
+								(display.innerHTML += 8)
+							);
+							break;
+						case "9":
+							console.log(9);
+							display.innerHTML = parseInt(
+								(display.innerHTML += 9)
+							);
+							break;
+						case "0":
+							console.log(0);
+							display.innerHTML = parseInt(
+								(display.innerHTML += 0)
+							);
+							break;
+
+						//For all operations, check to see what operation. Then check to see if last number is null.
+						//If yes: make display the last and total. If no: set last to current, total (operation)
+						//last. Then set current operation.
+						case "+":
+							console.log("+");
+							if (last == null) {
+								total = parseInt(display.innerHTML);
+								last = parseInt(display.innerHTML);
+							} else {
+								switch (op) {
+									case 1:
+										last = parseInt(display.innerHTML);
+										total += last;
+										break;
+									case 2:
+										last = parseInt(display.innerHTML);
+										total -= last;
+										break;
+									case 3:
+										last = parseInt(display.innerHTML);
+										total *= last;
+										break;
+									case 4:
+										last = parseInt(display.innerHTML);
+										total += last;
+										break;
+								}
+								//last = parseInt(display.innerHTML);
+								//total += last;
+							}
+							display.innerHTML = 0;
+							op = 1;
+							console.log("TOTAL" + total);
+							break;
+						case "÷":
+							console.log("/");
+							if (last == null) {
+								total = parseInt(display.innerHTML);
+								last = parseInt(display.innerHTML);
+							} else {
+								switch (op) {
+									case 1:
+										last = parseInt(display.innerHTML);
+										total += last;
+										break;
+									case 2:
+										last = parseInt(display.innerHTML);
+										total -= last;
+										break;
+
+									case 3:
+										last = parseInt(display.innerHTML);
+										total *= last;
+										break;
+									case 4:
+										last = parseInt(display.innerHTML);
+										total += last;
+										break;
+								}
+
+								//last = parseInt(display.innerHTML);
+								//total /= last;
+							}
+							display.innerHTML = 0;
+							op = 4;
+							break;
+						case "×":
+							console.log("*");
+							if (last == null) {
+								total = parseInt(display.innerHTML);
+								last = parseInt(display.innerHTML);
+							} else {
+								switch (op) {
+									case 1:
+										last = parseInt(display.innerHTML);
+										total += last;
+										break;
+									case 2:
+										last = parseInt(display.innerHTML);
+										total -= last;
+										break;
+
+									case 3:
+										last = parseInt(display.innerHTML);
+										total *= last;
+										break;
+									case 4:
+										last = parseInt(display.innerHTML);
+										total += last;
+										break;
+								}
+								//last = parseInt(display.innerHTML);
+								//total *= last;
+							}
+							display.innerHTML = 0;
+							op = 3;
+
+							console.log("TOTAL" + total);
+							break;
+						case "−":
+							console.log("-");
+							if (last == null) {
+								total = parseInt(display.innerHTML);
+								last = parseInt(display.innerHTML);
+							} else {
+								switch (op) {
+									case 1:
+										last = parseInt(display.innerHTML);
+										total += last;
+										break;
+									case 2:
+										last = parseInt(display.innerHTML);
+										total -= last;
+										break;
+
+									case 3:
+										last = parseInt(display.innerHTML);
+										total *= last;
+										break;
+									case 4:
+										last = parseInt(display.innerHTML);
+										total += last;
+										break;
+								}
+								//last = parseInt(display.innerHTML);
+								//total -= last;
+							}
+							display.innerHTML = 0;
+							op = 2;
+							break;
+						case "=":
+							if (op == 1) {
+								last = parseInt(display.innerHTML);
+								total += last;
+								//total += parseInt(display.innerHTML);
+								display.innerHTML = total;
+								console.log("+=");
+							} else if (op == 2) {
+								last = parseInt(display.innerHTML);
+								total -= last;
+								//total -= parseInt(display.innerHTML);
+								display.innerHTML = total;
+								console.log("-=");
+							} else if (op == 3) {
+								last = parseInt(display.innerHTML);
+								total *= last;
+								//total *= parseInt(display.innerHTML);
+								display.innerHTML = total;
+								console.log("*=");
+							} else {
+								last = parseInt(display.innerHTML);
+								total /= last;
+								//total /= parseInt(display.innerHTML);
+								display.innerHTML = total;
+								console.log("/=");
+							}
+							op = 0;
+							console.log(total);
+							break;
+						case "←":
+							console.log("delete");
+							display.innerHTML = parseInt(
+								display.innerHTML / 10
+							);
+							break;
+						case "C":
+							console.log("clear");
+							display.innerHTML = 0;
+							total = 0;
+							last = null;
+					}
+				});
+
+			//----------------------------------------
+			//
+			//KEYBOARD INPUT
+			//
+			//----------------------------------------
+			document.addEventListener("keydown", (event) => {
+				console.log(event.key);
+				switch (event.key) {
+					case "1":
+						console.log(1);
+						display.innerHTML = parseInt((display.innerHTML += 1));
+						break;
+					case "2":
+						console.log(2);
+						display.innerHTML = parseInt((display.innerHTML += 2));
+						break;
+					case "3":
+						console.log(3);
+						display.innerHTML = parseInt((display.innerHTML += 3));
+						break;
+					case "4":
+						console.log(4);
+						display.innerHTML = parseInt((display.innerHTML += 4));
+						break;
+					case "5":
+						console.log(5);
+						display.innerHTML = parseInt((display.innerHTML += 5));
+						break;
+					case "6":
+						console.log(6);
+						display.innerHTML = parseInt((display.innerHTML += 6));
+						break;
+					case "7":
+						console.log(7);
+						display.innerHTML = parseInt((display.innerHTML += 7));
+						break;
+					case "8":
+						console.log(8);
+						display.innerHTML = parseInt((display.innerHTML += 8));
+						break;
+					case "9":
+						console.log(9);
+						display.innerHTML = parseInt((display.innerHTML += 9));
+						break;
+					case "0":
+						console.log(0);
+						display.innerHTML = parseInt((display.innerHTML += 0));
+						break;
+					case "a":
+						console.log("+");
+						if (last == null) {
+							total = parseInt(display.innerHTML);
+							last = parseInt(display.innerHTML);
+						} else {
+							switch (op) {
+								case 1:
+									last = parseInt(display.innerHTML);
+									total += last;
+									break;
+								case 2:
+									last = parseInt(display.innerHTML);
+									total -= last;
+									break;
+
+								case 3:
+									last = parseInt(display.innerHTML);
+									total *= last;
+									break;
+								case 4:
+									last = parseInt(display.innerHTML);
+									total += last;
+									break;
+							}
+							//last = parseInt(display.innerHTML);
+							//total += last;
+						}
+						display.innerHTML = 0;
+						op = 1;
+						console.log("TOTAL" + total);
+						break;
+					case "d":
+						console.log("/");
+						if (last == null) {
+							total = parseInt(display.innerHTML);
+							last = parseInt(display.innerHTML);
+						} else {
+							switch (op) {
+								case 1:
+									last = parseInt(display.innerHTML);
+									total += last;
+									break;
+								case 2:
+									last = parseInt(display.innerHTML);
+									total -= last;
+									break;
+
+								case 3:
+									last = parseInt(display.innerHTML);
+									total *= last;
+									break;
+								case 4:
+									last = parseInt(display.innerHTML);
+									total += last;
+									break;
+							}
+
+							//last = parseInt(display.innerHTML);
+							//total /= last;
+						}
+						display.innerHTML = 0;
+						op = 4;
+						break;
+					case "x":
+						console.log("*");
+						if (last == null) {
+							total = parseInt(display.innerHTML);
+							last = parseInt(display.innerHTML);
+						} else {
+							switch (op) {
+								case 1:
+									last = parseInt(display.innerHTML);
+									total += last;
+									break;
+								case 2:
+									last = parseInt(display.innerHTML);
+									total -= last;
+									break;
+
+								case 3:
+									last = parseInt(display.innerHTML);
+									total *= last;
+									break;
+								case 4:
+									last = parseInt(display.innerHTML);
+									total += last;
+									break;
+							}
+							//last = parseInt(display.innerHTML);
+							//total *= last;
+						}
+						display.innerHTML = 0;
+						op = 3;
+
+						console.log("TOTAL" + total);
+						break;
+					case "s":
+						console.log("-");
+						if (last == null) {
+							total = parseInt(display.innerHTML);
+							last = parseInt(display.innerHTML);
+						} else {
+							switch (op) {
+								case 1:
+									last = parseInt(display.innerHTML);
+									total += last;
+									break;
+								case 2:
+									last = parseInt(display.innerHTML);
+									total -= last;
+									break;
+
+								case 3:
+									last = parseInt(display.innerHTML);
+									total *= last;
+									break;
+								case 4:
+									last = parseInt(display.innerHTML);
+									total += last;
+									break;
+							}
+							//last = parseInt(display.innerHTML);
+							//total -= last;
+						}
+						display.innerHTML = 0;
+						op = 2;
+						break;
+					case "Enter":
+						if (op == 1) {
+							last = parseInt(display.innerHTML);
+							total += last;
+							//total += parseInt(display.innerHTML);
+							display.innerHTML = total;
+							console.log("+=");
+						} else if (op == 2) {
+							last = parseInt(display.innerHTML);
+							total -= last;
+							//total -= parseInt(display.innerHTML);
+							display.innerHTML = total;
+							console.log("-=");
+						} else if (op == 3) {
+							last = parseInt(display.innerHTML);
+							total *= last;
+							//total *= parseInt(display.innerHTML);
+							display.innerHTML = total;
+							console.log("*=");
+						} else {
+							last = parseInt(display.innerHTML);
+							total /= last;
+							//total /= parseInt(display.innerHTML);
+							display.innerHTML = total;
+							console.log("/=");
+						}
+						op = 0;
+						console.log(total);
+						break;
+					case "Backspace":
+						console.log("delete");
+						display.innerHTML = parseInt(display.innerHTML / 10);
+						break;
+					case "Escape":
+						console.log("clear");
+						display.innerHTML = 0;
+						total = 0;
+						last = null;
+				}
+			});
+		</script>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="calculator-screen">
+				<h3 class="display">0</h3>
+			</div>
+
+			<div class="calculator-buttons">
+				<button class="clear"><h3>C</h3></button>
+				<button class="back"><h3>&#8592;</h3></button>
+				<button class="divide"><h3>&#xf7;</h3></button>
+				<button class="seven"><h3>7</h3></button>
+				<button class="eight"><h3>8</h3></button>
+				<button class="nine"><h3>9</h3></button>
+				<button class="times"><h3>&#xd7;</h3></button>
+				<button class="four"><h3>4</h3></button>
+				<button class="five"><h3>5</h3></button>
+				<button class="six"><h3>6</h3></button>
+				<button class="subtract"><h3>&#x2212;</h3></button>
+				<button class="one"><h3>1</h3></button>
+				<button class="two"><h3>2</h3></button>
+				<button class="three"><h3>3</h3></button>
+				<button class="add"><h3>+</h3></button>
+				<button class="zero"><h3>0</h3></button>
+				<button class="equal"><h3>&#x3d;</h3></button>
+			</div>
+		</div>
+		<h2>
+			You can use keyboard too! Enter:<br />
+			Add: a <br />
+			Subtract: s <br />
+			Multiply: x <br />
+			Divide: d <br />
+			Delete: backspace <br />
+			Clear: escape <br />
+			Enter: equals <br />
+			0-9: represents Number you can input
+		</h2>
+	</body>
 </html>
